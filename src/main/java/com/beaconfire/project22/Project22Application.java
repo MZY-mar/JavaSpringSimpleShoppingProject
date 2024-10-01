@@ -1,0 +1,15 @@
+package com.beaconfire.project22;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+
+@SpringBootApplication(exclude = HibernateJpaAutoConfiguration.class)
+public class Project22Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Project22Application.class, args);
+    }
+
+}
