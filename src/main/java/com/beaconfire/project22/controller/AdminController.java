@@ -20,6 +20,17 @@ public class AdminController {
     @Autowired
     private ProductService productService;
 
+
+    @GetMapping("/order/getallorders")
+    public ResponseEntity<List<OrderDTO>> getAllOrdersByUser( ) {
+        List<OrderDTO> orders = orderService.getAllOrder();
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/products/getallproducts")
+    public List<Product> getAllAvailableProducts() {
+        return productService.getAvailableProducts();
+    }
     @GetMapping("/orders/userid/{userId}")
     public ResponseEntity<List<OrderDTO>> getAllOrdersByUser(@PathVariable Long userId) {
         List<OrderDTO> orders = orderService.getOrdersByUser(userId);
@@ -59,7 +70,25 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error updating product: " + e.getMessage());
         }
     }
+    @PatchMapping("/orders/{orderId}/cancel")
+    public ResponseEntity<String> cancelOrder(@PathVariable Long orderId) throws Exception {
 
+        try {
+            orderService.cancelOrder(orderId);
+            return ResponseEntity.ok("Order cancled successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error Cancel Order: " + e.getMessage());
+        }
+    }
+    @PatchMapping("/orders/{orderId}/complete")
+    public ResponseEntity<String> completeOrder(@PathVariable Long orderId) throws Exception {
+        try {
+            orderService.completeOrder(orderId);
+            return ResponseEntity.ok("Order cancled successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error Cancel Order: " + e.getMessage());
+        }
+    }
     @DeleteMapping("/products/delete/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
         try {

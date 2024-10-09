@@ -34,18 +34,23 @@ public class OrderService {
     private ProductDao productDao;
 
     // Method to get orders by user
+
+    @Transactional
     public List<OrderDTO> getOrdersByUser(Long userId) {
         Users user = userDao.findById(userId);
        List<Order>orders = orderDao.findByUser(user);
        return orders.stream().map(this::convertToOrderDTO).collect(Collectors.toList());
     }
 
+
+    @Transactional
     public OrderDTO getOrderById(Long orderId) throws Exception {
         Order order = orderDao.findById(orderId);
-        if (order == null) {
-            throw new Exception("Order not found");
-        }
         return convertToOrderDTO(order);
+    }
+    @Transactional
+    public List<OrderItem> getOrderItemsByOrderId(Long orderId) {
+        return orderItemDao.getAllOrderItemsByOrderId(orderId);
     }
 
     private OrderDTO convertToOrderDTO(Order order) {
@@ -55,12 +60,31 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         // Return the new OrderDTO
-        return new OrderDTO(order.getOrderId(), order.getOrderStatus(), order.getUser().getUserId(), orderItemDTOs);
+        return new OrderDTO(order.getOrderId(), order.getOrderStatus(),
+                order.getUser().getUserId(), orderItemDTOs,
+                order.getDatePlaced());
     }
 
+
+    @Transactional
+    public List<OrderDTO> getAllOrder()  {
+
+        List<Order>orders = orderDao.getAll();
+        return orders.stream().map(this::convertToOrderDTO).collect(Collectors.toList());
+    }
     // Place an order
     @Transactional
     public Order placeOrder(Order order) throws NotEnoughInventoryException {
+        System.out.println("User ID: " + order.getUser().getUserId());
+
+        Users user = userDao.findById(order.getUser().getUserId());
+
+        if (user != null){
+            order.setUser(user);
+        }else {
+            throw new NotEnoughInventoryException("User not found");
+
+        }
         List<OrderItem> orderItems = order.getOrderItemList();
 
         // Check each item in the order
@@ -79,6 +103,7 @@ public class OrderService {
             product.setQuantity(product.getQuantity() - item.getQuantity());
             productDao.add(product);
             item.setPurchasedPrice(product.getRetailPrice());
+            item.setOrder(order);
         }
 
         // Save the order as "Processing"
@@ -86,6 +111,16 @@ public class OrderService {
         orderDao.add(order);
         return order;
     }
+    @Transactional
+    public List<Object[]> getTop3FrequentlyPurchasedItems(Long userId) {
+        return orderDao.findTop3FrequentlyPurchasedItemsByUser(userId);
+    }
+
+    @Transactional
+    public List<Object[]> getTop3RecentlyPurchasedItems(Long userId) {
+        return orderDao.findTop3RecentlyPurchasedItemsByUser(userId);
+    }
+
 
     @Transactional
     public void deleteOrder(Long orderId) throws Exception {
@@ -128,5 +163,22 @@ public class OrderService {
         // Update product details
         order.setOrderStatus(status);
         return orderDao.saveOrUpdate(order);  // Save the updated product
+    }
+
+
+    @Transactional
+    public void completeOrder(Long orderId) throws Exception {
+        Order order = orderDao.findById(orderId);
+        if (order == null) {
+            throw new Exception("Order not found");
+        }
+        if ("Processing".equals(order.getOrderStatus())) {
+            order.setOrderStatus("Completed");
+            orderDao.saveOrUpdate(order);
+        } else if ("Completed".equals(order.getOrderStatus())) {
+            throw new ProductNotInWatchlistException("Cannot Complete a completed order.");
+        }else if ("Canceled".equals(order.getOrderStatus())){
+            throw new ProductNotInWatchlistException("Cannot Complete a Canceled order.");
+        }
     }
 }

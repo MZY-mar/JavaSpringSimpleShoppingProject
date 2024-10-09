@@ -16,14 +16,20 @@ public class ProductService {
     private ProductDao productDao;
 
     //Get all available products (in stock only quantity > 0)
+
+    @Transactional
     public List<Product> getAvailableProducts() {
         return productDao.findByQuantityGreaterThan(0);
     }
+
+    @Transactional
     public List<Product> getAllProductList() {
         return productDao.getAll();
     }
 
     // Get product details
+
+    @Transactional
     public Optional<Product> getProductDetails(Long productId) {
         return Optional.ofNullable(productDao.findById(productId));
     }

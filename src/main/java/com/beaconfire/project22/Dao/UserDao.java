@@ -26,12 +26,14 @@ public class UserDao extends AbstractHibernateDao<Users> {
         return count != null && count > 0;
     }
 
-    public Optional<Users> findByUsername(String username) {
+    public Users findByUsername(String username) {
         String hql = "FROM Users u WHERE u.username = :username";
         Users user = getCurrentSession().createQuery(hql, Users.class)
                 .setParameter("username", username)
                 .uniqueResult();
-        return Optional.ofNullable(user);
+        System.out.println("get user from db in dao :" +user.getUsername() +
+                ": " + user.getPassword());
+        return user;
     }
 
     public Users findById(Long userId) {

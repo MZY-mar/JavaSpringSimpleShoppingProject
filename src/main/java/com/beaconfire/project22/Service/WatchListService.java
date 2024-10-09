@@ -4,6 +4,7 @@ package com.beaconfire.project22.Service;
 import com.beaconfire.project22.Dao.WatchListDao;
 import com.beaconfire.project22.Model.WatchList;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class WatchListService {
     private ProductService productService; // Assume this service exists for managing products
 
     // Add a product to the watchlist
+
+
+    @Transactional
     public WatchList addProductToWatchlist(Long userId, Long productId) {
         Optional<WatchList> existingWatchlist = watchlistDao.findByUserIdAndProductId(userId, productId);
         if (existingWatchlist.isPresent()) {
@@ -32,6 +36,7 @@ public class WatchListService {
     }
 
     // Remove a product from the watchlist
+    @Transactional
     public void removeProductFromWatchlist(Long userId, Long productId) {
         Optional<WatchList> existingWatchlist =
                 watchlistDao.findByUserIdAndProductId(userId, productId);
@@ -43,6 +48,7 @@ public class WatchListService {
     }
 
     // in-stock products in the watchlist
+    @Transactional
     public List<Long> getInStockProductsInWatchlist(Long userId) {
         List<WatchList> watchlist = watchlistDao.findByUserId(userId);
         return watchlist.stream()

@@ -2,6 +2,7 @@ package com.beaconfire.project22.Model;
 
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,9 +22,12 @@ public class Order {
     private String orderStatus;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+
     private Users user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch =
+            FetchType.LAZY)
+    @JsonManagedReference
     private List<OrderItem> orderItemList;
 
     public Long getOrderId() {

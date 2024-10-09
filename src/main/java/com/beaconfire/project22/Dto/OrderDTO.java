@@ -1,20 +1,22 @@
 package com.beaconfire.project22.Dto;
 
-import com.beaconfire.project22.Model.OrderItem;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderDTO {
     private Long orderId;
     private String orderStatus;
     private Long userId;
+    private   LocalDateTime datePlaced;
     private List<OrderItemDTO> orderItems;
 
-    public OrderDTO(Long orderId, String orderStatus, Long userId, List<OrderItemDTO> orderItems) {
+    public OrderDTO(Long orderId, String orderStatus, Long userId,
+                    List<OrderItemDTO> orderItems, LocalDateTime placed) {
         this.orderId = orderId;
         this.orderStatus = orderStatus;
         this.userId = userId;
         this.orderItems = orderItems;
+        this.datePlaced = placed;
     }
 
     public Long getOrderId() {
@@ -41,5 +43,11 @@ public class OrderDTO {
         this.userId = userId;
     }
 
+    public LocalDateTime getDatePlaced() {
+        return datePlaced;
+    }
 
+    public void setDatePlaced(LocalDateTime datePlaced) {
+        this.datePlaced = datePlaced;
+    }
 }

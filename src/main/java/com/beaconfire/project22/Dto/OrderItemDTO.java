@@ -5,6 +5,7 @@ public class OrderItemDTO {
     private int quantity;
     private double purchasedPrice;
 
+
     // Constructor
     public OrderItemDTO(Long productId, int quantity) {
         this.productId = productId;

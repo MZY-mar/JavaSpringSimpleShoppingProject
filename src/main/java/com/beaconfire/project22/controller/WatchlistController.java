@@ -17,10 +17,13 @@ public class WatchlistController {
 
     // Add a product to the watchlist
     @PostMapping("/add")
-    public ResponseEntity<String> addProductToWatchlist(@PathVariable WatchListDTO request) {
+    public ResponseEntity<String> addProductToWatchlist(@RequestBody WatchListDTO request) {
+        System.out.println("User ID: " + request.getUserId());
+        System.out.println("Product ID: " + request.getProductId());
         watchlistService.addProductToWatchlist(request.getUserId(), request.getProductId());
         return ResponseEntity.ok("Product added to watchlist.");
     }
+
 
     // Remove a product from the watchlist
     @DeleteMapping("/remove")
@@ -31,7 +34,7 @@ public class WatchlistController {
 
     // Get in-stock products in the user's watchlist
     @GetMapping("/in-stock/{userId}")
-    public ResponseEntity<List<Long>> getInStockProductsInWatchlist(@RequestParam Long userId) {
+    public ResponseEntity<List<Long>> getInStockProductsInWatchlist(@PathVariable Long userId) {
         List<Long> products = watchlistService.getInStockProductsInWatchlist(userId);
         return ResponseEntity.ok(products);
     }
